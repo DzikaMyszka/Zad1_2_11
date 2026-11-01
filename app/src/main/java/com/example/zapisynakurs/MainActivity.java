@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,20 +66,51 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btnSubmit.setOnClickListener(v -> {
-            String name = etName.getText().toString().trim();
-            String email = etEmail.getText().toString().trim();
-            String course = spCourse.getSelectedItem().toString();;
-            String mode = "brak";
-            if (rgMode.getCheckedRadioButtonId() == R.id.rbOnsite) {
-                mode = "Stacjonarny";
-            } else if (rgMode.getCheckedRadioButtonId() == R.id.rbRemote) {
-                mode = "Zdalny";
-            }
-            String newsletter = swNewsletter.isChecked() ? "tak" : "nie";
-            int level = sbLevel.getProgress();
+            if (validateForm()) {
+                String name = etName.getText().toString().trim();
+                String email = etEmail.getText().toString().trim();
+                String course = spCourse.getSelectedItem().toString();
+                String mode = "brak";
+                if (rgMode.getCheckedRadioButtonId() == R.id.rbOnsite) {
+                    mode = "Stacjonarny";
+                } else if (rgMode.getCheckedRadioButtonId() == R.id.rbRemote) {
+                    mode = "Zdalny";
+                }
+                String newsletter = swNewsletter.isChecked() ? "tak" : "nie";
+                int level = sbLevel.getProgress();
 
-            String summary = name + "\n" + email + "\n" + birthDate + "\n" + course + "\n" + mode + "\n" + level + "/10\n" + newsletter;
-            tvSummary.setText(summary);
+                String summary = name + "\n" + email + "\n" + birthDate + "\n" + course + "\n" + mode + "\n" + level + "/10\n" + newsletter;
+                tvSummary.setText(summary);
+            }
         });
+
+        }
+    private boolean validateForm() {
+        String name = etName.getText().toString().trim();
+        if (name.isEmpty()) {
+            etName.setError("Podaj imię i nazwisko");
+            etName.requestFocus();
+            return false;
+        }
+
+        String email = etEmail.getText().toString().trim();
+        if (email.isEmpty() || !email.contains("@")) {
+            etEmail.setError("Niepoprawny adres e-mail");
+            etEmail.requestFocus();
+            return false;
+        }
+
+        if (spCourse.getSelectedItemPosition() == 0) {
+            Toast.makeText(this, "Wybierz kurs", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (rgMode.getCheckedRadioButtonId() == -1) {
+            Toast.makeText(this, "Zaznacz tryb zajęć", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
+
 }
