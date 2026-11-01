@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.materialswitch.MaterialSwitch;
+import android.widget.ArrayAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
         swNewsletter = findViewById(R.id.swNewsletter);
         cbTerms = findViewById(R.id.cbTerms);
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.courses, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCourse.setAdapter(adapter);
+
+
         tvLevelValue.setText(String.valueOf(sbLevel.getProgress()));
 
         cbTerms.setOnCheckedChangeListener((buttonView, isChecked) ->
@@ -60,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(v -> {
             String name = etName.getText().toString().trim();
             String email = etEmail.getText().toString().trim();
-            String course = "brak";
+            String course = spCourse.getSelectedItem().toString();;
             String mode = "brak";
             if (rgMode.getCheckedRadioButtonId() == R.id.rbOnsite) {
                 mode = "Stacjonarny";
