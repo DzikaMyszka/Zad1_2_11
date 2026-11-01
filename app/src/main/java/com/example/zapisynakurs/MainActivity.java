@@ -13,6 +13,9 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.snackbar.Snackbar;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText etName, etEmail;
@@ -67,20 +70,26 @@ public class MainActivity extends AppCompatActivity {
 
         btnSubmit.setOnClickListener(v -> {
             if (validateForm()) {
-                String name = etName.getText().toString().trim();
-                String email = etEmail.getText().toString().trim();
-                String course = spCourse.getSelectedItem().toString();
-                String mode = "brak";
-                if (rgMode.getCheckedRadioButtonId() == R.id.rbOnsite) {
-                    mode = "Stacjonarny";
-                } else if (rgMode.getCheckedRadioButtonId() == R.id.rbRemote) {
-                    mode = "Zdalny";
-                }
-                String newsletter = swNewsletter.isChecked() ? "tak" : "nie";
-                int level = sbLevel.getProgress();
+                new AlertDialog.Builder(this)
+                        .setTitle("Wysłać zgłoszenie?")
+                        .setMessage("Sprawdź dane przed wysłaniem")
+                        .setPositiveButton("Tak", (dialog, which) -> {
+                            String name = etName.getText().toString().trim();
+                            String email = etEmail.getText().toString().trim();
+                            String course = spCourse.getSelectedItem().toString();
+                            String mode = rgMode.getCheckedRadioButtonId() == R.id.rbOnsite ? "Stacjonarny" : "Zdalny";
+                            String newsletter = swNewsletter.isChecked() ? "tak" : "nie";
+                            int level = sbLevel.getProgress();
 
-                String summary = name + "\n" + email + "\n" + birthDate + "\n" + course + "\n" + mode + "\n" + level + "/10\n" + newsletter;
-                tvSummary.setText(summary);
+                            String summary = name + "\n" + email + "\n" + birthDate + "\n" + course + "\n" + mode + "\n" + level + "/10\n" + newsletter;
+                            tvSummary.setText(summary);
+
+                            Snackbar.make(findViewById(R.id.main), "Zgłoszenie wysłane", Snackbar.LENGTH_LONG)
+                                    .setAction("Cofnij", v2 -> tvSummary.setText(""))
+                                    .show();
+                        })
+                        .setNegativeButton("Nie", null)
+                        .show();
             }
         });
 
